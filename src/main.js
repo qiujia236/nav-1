@@ -6,8 +6,8 @@ const stringObject = JSON.parse(string);
 
 const hashMap = stringObject || [
   { logo: "G", logoType: "text", url: "https://www.google.hk" },
-  { logo: "bilibili.jpg", logoType: "image", url: "https://www.bilibili.com" },
-  { logo: "B", logoType: "text", url: "https://www.baidu.com" }
+  { logo: "B", logoType: "text", url: "https://www.baidu.com" },
+  { logo: "bilibili.jpg", logoType: "image", url: "https://www.bilibili.com" }
 ];
 
 const removeUrl = url => {
@@ -21,17 +21,35 @@ const removeUrl = url => {
 const $paint = () => {
   $siteList.find("li:not(.last)").remove();
   hashMap.forEach((node, index) => {
-    const $li = $(`<li>
-          <div class="site">
-              <div class="logo">${node.logo[0]}</div>
-              <div class="link">${removeUrl(node.url)}</div>
-              <div class="close">
-              <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-close"></use>
-              </svg>
-              </div>
-          </div>
-        </li>`).insertBefore($lastLi);
+    let $li;
+    if (node.logoType === "text") {
+      $li = $(`<li>
+            <div class="site">
+                <div class="logo">${node.logo[0]}</div>
+                <div class="link">${removeUrl(node.url)}</div>
+                <div class="close">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#icon-close"></use>
+                </svg>
+                </div>
+            </div>
+          </li>`).insertBefore($lastLi);
+    } else if (node.logoType === "image") {
+      $li = $(`<li>
+            <div class="site">
+                <div class="logo"><img src="${node.logo}"></div>
+                <div class="link">${removeUrl(node.url)}</div>
+                <div class="close">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#icon-close"></use>
+                </svg>
+                </div>
+            </div>
+          </li>`).insertBefore($lastLi);
+    } else {
+      return false;
+    }
+
     $li.on("click", () => {
       window.open(node.url);
     });
@@ -43,6 +61,7 @@ const $paint = () => {
     });
   });
 };
+
 $paint();
 
 $(".addButton").on("click", () => {
@@ -62,7 +81,7 @@ $(".addButton").on("click", () => {
 
 window.onbeforeunload = () => {
   const string = JSON.stringify(hashMap);
-  window.localStorage.setItem("x", string);
+  // window.localStorage.setItem("x", string);
 };
 
 $(document).on("keypress", e => {
